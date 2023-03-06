@@ -1,16 +1,24 @@
-# This is a sample Python script.
+from fastapi import FastAPI
+import uvicorn
+from db.base import database
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+app = FastAPI()
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", port=5049, host="127.0.0.1", reload=True)
