@@ -1,13 +1,10 @@
 from fastapi import FastAPI
 import uvicorn
 from db.base import database
+from endpoints import users
 
-app = FastAPI()
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+app = FastAPI(title="Employement exchange")
+app.include_router(users.router, prefix="/users", tags=["users"])
 
 
 @app.on_event("startup")
@@ -21,4 +18,4 @@ async def shutdown():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=5049, host="127.0.0.1", reload=True)
+    uvicorn.run("main:app", port=5432, host="127.0.0.1", reload=True)
